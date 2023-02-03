@@ -55,6 +55,7 @@ BIN_ARCH ?= $(shell uname -m)
 BINDIR = bin
 PAIRING_OBJECTS = $(addprefix $(BINDIR)/,$(CPP_SOURCES:.cpp=.o)) $(addprefix $(BINDIR)/,$(ASM_SOURCES:.s=.o))
 
+.PHONY: all
 all: pairing.a ;
 
 $(BINDIR)/builtfor-%:
@@ -64,8 +65,8 @@ $(BINDIR)/builtfor-%:
 	@mkdir -p $(BINDIR)
 	@touch $@
 
-pairing.a: $(PAIRING_OBJECTS)
-	$(AR) rcs pairing.a $+
+pairing.a: $(BINDIR)/builtfor-$(BIN_OS)-$(BIN_ARCH) $(PAIRING_OBJECTS)
+	$(AR) rcs pairing.a $(wordlist 2,$(words $+),$+ )
 
 $(BINDIR)/%.o: $(BINDIR)/builtfor-$(BIN_OS)-$(BIN_ARCH) %.cpp
 	mkdir -p $(dir $@)
